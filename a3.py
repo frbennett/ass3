@@ -163,6 +163,7 @@ class DotsApp:
         self.draw_grid()
         print('im at the end of this')
 
+
     def animate(self, steps, callback=lambda: None):
         """Animates some steps (i.e. from selecting some dots, activating companion, etc.
         
@@ -305,6 +306,7 @@ class DotsApp:
         self.reported_score = score
         self._master.update()
         self._master.event_generate("<<update_score>>", when='head')
+
 
 
 
