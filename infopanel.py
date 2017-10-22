@@ -34,6 +34,11 @@ class InfoPanel(Frame):
         self.event_generate("<<Foo>>", when="tail")
         print('hello')
 
+    def set_score(self, value):
+        value_str = str(value)
+        self.label1.config(text=value_str)
+
+
 
 #app = InfoPanel('InfoPanel')
 #app.mainloop()

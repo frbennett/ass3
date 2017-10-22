@@ -161,7 +161,6 @@ class DotsApp:
         print(step_name)
         self._refresh_status()
         self.draw_grid()
-        print('im at the end of this')
 
 
     def animate(self, steps, callback=lambda: None):
@@ -291,7 +290,10 @@ class DotsApp:
         #     return self.animate(steps)
 
         # Need to check whether the game is over
-        raise NotImplementedError()  # no mercy for stooges
+        #raise NotImplementedError()  # no mercy for stooges
+        print('drop is compler')
+        self.doit()
+
 
     def _refresh_status(self):
         """Handles change in score"""
@@ -304,8 +306,12 @@ class DotsApp:
         score = self._game.get_score()
         print("Score is now {}.".format(score))
         self.reported_score = score
-        self._master.update()
-        self._master.event_generate("<<update_score>>", when='head')
+
+    def doit(self):
+        self._master.event_generate("<<xxxyyy>>", when='tail')
+
+        print('hello')
+
 
 
 
@@ -315,11 +321,13 @@ class DotsApp:
 def doFoo(*args):
     print('hello world')
 
-def update_score(frame, *args):
-    print('score updated')
-    score = frame.reported_score
-    print('reported score is : ', score)
+def update_score(event, obj, info):
+    #score = frame.reported_score
+    print('reported score is : ')
     print("im here")
+    print(obj.reported_score)
+    score = obj.reported_score
+    info.set_score(score)
 
 
 
@@ -332,14 +340,16 @@ def main():
     frame1 = tk.Frame(root)
     frame1.pack()
     frame2 = tk.Frame(root)
+
     frame2.pack()
 
-    infopanel.InfoPanel(frame1)
+    info = infopanel.InfoPanel(frame1)
 
-    root.bind("<<Foo>>", doFoo)
+    #frame1.bind("<<Foo>>", doFoo)
     test = DotsApp(frame2)
-    root.bind("<<update_score>>", update_score(test))
-    #frame2.bind("<<update_score>>", update_score(test))
+    #frame2.bind("<<xxxyyy>>", update_score(test))
+    frame2.bind("<<xxxyyy>>", lambda event, obj=test, obj2=info: update_score(event, obj, info))
+    #bind("<1>", lambda event, obj=l2: OnClickB(event, obj))
 
 
     root.mainloop()
