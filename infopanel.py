@@ -6,7 +6,6 @@ path = './images/companions/penguin.gif'
 # path = './images/companions/penguin.png'
 #path = 'useless.gif'
 
-
 class InfoPanel(Frame):
     def __init__(self, parent):
         Frame.__init__(self, parent)
@@ -33,6 +32,8 @@ class InfoPanel(Frame):
         self.label1.config(text='change the value')
         self.event_generate("<<Foo>>", when="tail")
         print('hello')
+
+    
 
 
 #app = InfoPanel('InfoPanel')
