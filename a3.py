@@ -326,7 +326,34 @@ def update_score(event, obj, info):
     info.set_score(score)
 
 
+def hello():
+    print('hello')
 
+
+def setup_menu(x):
+    menubar = tk.Menu(x)
+
+    # create a pulldown menu, and add it to the menu bar
+    filemenu = tk.Menu(menubar, tearoff=0)
+    filemenu.add_command(label="Open", command=hello)
+    filemenu.add_command(label="Save", command=hello)
+    filemenu.add_separator()
+    filemenu.add_command(label="Exit", command=x.quit)
+    menubar.add_cascade(label="File", menu=filemenu)
+
+    # create more pulldown menus
+    editmenu = tk.Menu(menubar, tearoff=0)
+    editmenu.add_command(label="Cut", command=hello)
+    editmenu.add_command(label="Copy", command=hello)
+    editmenu.add_command(label="Paste", command=hello)
+    menubar.add_cascade(label="Edit", menu=editmenu)
+
+    helpmenu = tk.Menu(menubar, tearoff=0)
+    helpmenu.add_command(label="About", command=hello)
+    menubar.add_cascade(label="Help", menu=helpmenu)
+
+    # display the menu
+    x.config(menu=menubar)
 
 
 def main():
@@ -346,6 +373,7 @@ def main():
     #frame2.bind("<<xxxyyy>>", update_score(test))
     frame2.bind("<<xxxyyy>>", lambda event, obj=test, obj2=info: update_score(event, obj, info))
     #bind("<1>", lambda event, obj=l2: OnClickB(event, obj))
+    setup_menu(root)
 
 
     root.mainloop()
