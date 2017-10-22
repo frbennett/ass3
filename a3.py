@@ -314,10 +314,6 @@ class DotsApp:
 
 
 
-
-
-
-
 def doFoo(*args):
     print('hello world')
 
