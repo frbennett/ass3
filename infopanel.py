@@ -55,9 +55,10 @@ class InfoPanel(Frame):
         self.grid()
         #self.master.title(title)
 
-        self.label1 = Label(self, text='Hello')
-        self.label1.grid(row=0, column=0)
-        self.label1.bind('<Button-1>', self.change_text)
+        self.label1 = Label(self, text=' ')
+        self.label1.grid(row=0, column=0, sticky=W)
+        self.label1.config(font=("Arial", 44, "bold"), justify=LEFT)
+        #self.label1.bind('<Button-1>', self.change_text)
 
         img = Image.open(path)
         resize = img.resize((200, 200), Image.ANTIALIAS)
