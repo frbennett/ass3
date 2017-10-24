@@ -86,13 +86,6 @@ class InfoPanel(Frame):
         self.label1.config(text=value_str)
 
 
-
-<<<<<<< HEAD
-=======
-
-
-
 #app = InfoPanel('InfoPanel')
 #app.mainloop()
-#
->>>>>>> 450c405ab57afbf5676ab29be6f8952fb44b4bda
+

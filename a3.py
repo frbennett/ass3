@@ -12,6 +12,7 @@ from tkinter.messagebox import showinfo
 import os
 import random
 import infopanel
+import progress_bar
 
 try:
     from PIL import ImageTk, Image
@@ -317,13 +318,14 @@ class DotsApp:
 def doFoo(*args):
     print('hello world')
 
-def update_score(event, obj, info):
+def update_score(event, obj, info, obj3):
     #score = frame.reported_score
     print('reported score is : ')
     print("im here")
     print(obj.reported_score)
     score = obj.reported_score
     info.set_score(score)
+    obj3.update_score()
 
 
 def hello():
@@ -362,16 +364,22 @@ def main():
     root = tk.Tk()
     frame1 = tk.Frame(root)
     frame1.pack()
+    pbar = progress_bar.interval_bar(root)
+    pbar.pack()
     frame2 = tk.Frame(root)
 
     frame2.pack()
 
     info = infopanel.InfoPanel(frame1)
+    #progress = progress_bar.interval_bar(pbar)
+
+
+    #c = Canvas(iframe5, bg='white', width=340, height=100)
 
     #frame1.bind("<<Foo>>", doFoo)
     test = DotsApp(frame2)
     #frame2.bind("<<xxxyyy>>", update_score(test))
-    frame2.bind("<<xxxyyy>>", lambda event, obj=test, obj2=info: update_score(event, obj, info))
+    frame2.bind("<<xxxyyy>>", lambda event, obj=test, obj2=info, obj3=pbar: update_score(event, obj, obj2, obj3))
     #bind("<1>", lambda event, obj=l2: OnClickB(event, obj))
     setup_menu(root)
 
