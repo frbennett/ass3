@@ -87,6 +87,3 @@ class InfoPanel(Frame):
 
 
 
-#app = InfoPanel('InfoPanel')
-#app.mainloop()
-#
