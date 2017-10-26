@@ -45,7 +45,7 @@ def load_image_tk(image_id, size, prefix, suffix='.gif'):
 load_image = load_image_pil if HAS_PIL else load_image_tk  # pylint: disable=invalid-name
 
 
-path = './images/companions/penguin.gif'
+path = './images/companions/buffalo_large.gif'
 # path = './images/companions/penguin.png'
 #path = 'useless.gif'
 
