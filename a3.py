@@ -362,13 +362,14 @@ def main():
     """Sets-up the GUI for Dots & Co"""
     # Write your GUI instantiation code here
     root = tk.Tk()
+    root.grid()
     frame1 = tk.Frame(root)
-    frame1.pack()
+    frame1.grid(row=0, column=0)
     pbar = progress_bar.interval_bar(root)
-    pbar.pack()
+    pbar.grid(row=1, column=0)
     frame2 = tk.Frame(root)
 
-    frame2.pack()
+    frame2.grid(row=2, column=0)
 
     info = infopanel.InfoPanel(frame1)
     #progress = progress_bar.interval_bar(pbar)
