@@ -22,7 +22,7 @@ try:
 except ImportError:
     HAS_PIL = False
 
-from view import GridView
+from view import GridView, ObjectivesView
 from game import DotGame, ObjectiveManager
 from dot import BasicDot
 from util import create_animation, ImageManager
@@ -101,14 +101,17 @@ class DotsApp:
         # randomly pair counts with each kind of dot
         objectives = zip([BasicDot(1), BasicDot(2), BasicDot(4), BasicDot(3)], counts)
 
+        self.initial_objectives = [(BasicDot(1), counts[0]), (BasicDot(2), counts[1]), (BasicDot(4), counts[2]), (BasicDot(3), counts[3])]
+
         self._objectives = ObjectiveManager(objectives)
+
 
         # Game
         dead_cells = {(2, 2), (2, 3), (2, 4),
                       (3, 2), (3, 3), (3, 4),
                       (4, 2), (4, 3), (4, 4),
                       (0, 7), (1, 7), (6, 7), (7, 7)}
-        self._game = DotGame({BasicDot: 1}, objectives=self._objectives, kinds=(1, 2, 3, 4), size=(8, 8),
+        self._game = DotGame({BasicDot: 1}, objectives=self._objectives, kinds=(1, 2, 3, 4), size=(12, 12),
                              dead_cells=dead_cells)
 
         # The following code may be useful when you are implementing task 2:
@@ -293,6 +296,8 @@ class DotsApp:
         # Need to check whether the game is over
         #raise NotImplementedError()  # no mercy for stooges
         print('drop is compler')
+        print(str(self._objectives.status))
+        self.updated_objectives = self._objectives.status
         self.doit()
 
 
@@ -326,6 +331,8 @@ def update_score(event, obj, info, obj3):
     score = obj.reported_score
     info.set_score(score)
     obj3.update_score()
+    obj.check_game_over()
+    info.objectives.draw(obj.updated_objectives)
 
 
 def hello():
@@ -372,6 +379,8 @@ def main():
     frame2.grid(row=2, column=0)
 
     info = infopanel.InfoPanel(frame1)
+
+
     #progress = progress_bar.interval_bar(pbar)
 
 
@@ -379,6 +388,8 @@ def main():
 
     #frame1.bind("<<Foo>>", doFoo)
     test = DotsApp(frame2)
+    objectives = test.initial_objectives
+    info.objectives.draw(objectives)
     #frame2.bind("<<xxxyyy>>", update_score(test))
     frame2.bind("<<xxxyyy>>", lambda event, obj=test, obj2=info, obj3=pbar: update_score(event, obj, obj2, obj3))
     #bind("<1>", lambda event, obj=l2: OnClickB(event, obj))
