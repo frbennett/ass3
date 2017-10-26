@@ -25,6 +25,7 @@ except ImportError:
 from view import GridView, ObjectivesView
 from game import DotGame, ObjectiveManager
 from dot import BasicDot
+from dot import WildcardDot
 from util import create_animation, ImageManager
 
 # Fill these in with your details
@@ -111,15 +112,17 @@ class DotsApp:
                       (3, 2), (3, 3), (3, 4),
                       (4, 2), (4, 3), (4, 4),
                       (0, 7), (1, 7), (6, 7), (7, 7)}
+        self._game = DotGame({BasicDot: 1, WildcardDot: 1}, objectives=self._objectives, kinds=(1, 2, 3, 4), size=(8, 8),
+=======
         self._game = DotGame({BasicDot: 1}, objectives=self._objectives, kinds=(1, 2, 3, 4), size=(12, 12),
                              dead_cells=dead_cells)
 
         # The following code may be useful when you are implementing task 2:
-        # for i in range(0, 4):
-        #     for j in range(0, 2):
-        #         position = i, j
-        #         self._game.grid[position].set_dot(BasicDot(3))
-        # self._game.grid[(7, 3)].set_dot(BasicDot(1))
+         #for i in range(0, 4):
+             #for j in range(0, 2):
+                 #position = i, j
+                 #self._game.grid[position].set_dot(BasicDot(3))
+         #self._game.grid[(7, 3)].set_dot(BasicDot(1))
 
         # Grid View
         self._grid_view = GridView(master, size=self._game.grid.size(), image_manager=self._image_manager)
