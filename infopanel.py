@@ -45,45 +45,51 @@ def load_image_tk(image_id, size, prefix, suffix='.gif'):
 load_image = load_image_pil if HAS_PIL else load_image_tk  # pylint: disable=invalid-name
 
 
+path = './images/companions/buffalo_large.gif'
 # path = './images/companions/penguin.png'
 #path = 'useless.gif'
 
 class InfoPanel(Frame):
     def __init__(self, parent):
         Frame.__init__(self, parent)
-        self.grid()
-        #self.master.title(title)
+        self.grid(sticky=SE)
 
-        self.label1 = Label(self, text=' ')
-        self.label1.grid(row=0, column=0, sticky=W)
-        self.label1.config(font=("Arial", 44, "bold"), justify=LEFT)
-        #self.label1.bind('<Button-1>', self.change_text)
+        self.score = Label(self, text='0')
+        self.score.grid(row=0, column=0, sticky=NW)
+        self.score.config(font=("Arial", 30, "bold"), justify=LEFT, width=3)
+
+        self.moves = Label(self, text='')
+        self.moves.grid(row=1, column=0, sticky=NW)
+        self.moves.config(font=("Arial", 30, "bold"),fg = 'blue', justify=LEFT, width=3)
 
         img = Image.open(path)
         resize = img.resize((200, 200), Image.ANTIALIAS)
         self.companion_img = ImageTk.PhotoImage(resize)
 
         self.label = Label(self, image=self.companion_img)
-        self.label.grid(row=2, rowspan=6, column=4, columnspan=3)
-        self.label.bind('<Button-1>', self.depositCallBack)
+        self.label.grid(row=0, rowspan=2, column=1, columnspan=1)
 
         self.objectives = ObjectivesView(self, image_manager = ImageManager('images/dots/', loader=load_image))
-        self.objectives.grid(row=2, column=10)
+        self.objectives.grid(row=0, column=2, sticky=NE)
 
 
-    def depositCallBack(self, event):
-        # self.depositLabel.config(text='the test has changed')
-        print('hello')
 
     def change_text(self, event):
-        self.label1.config(text='change the value')
+        self.score.config(text='change the value')
         self.event_generate("<<Foo>>", when="tail")
         print('hello')
 
 
     def set_score(self, value):
         value_str = str(value)
-        self.label1.config(text=value_str)
+        self.score.config(text=value_str)
+
+    def set_moves(self, value):
+        value_str = str(value)
+        self.moves.config(text=value_str)
+
+    def reset_score(self):
+        self.score.config(text="0")
 
 
 #app = InfoPanel('InfoPanel')

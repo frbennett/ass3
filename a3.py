@@ -13,6 +13,7 @@ import os
 import random
 import infopanel
 import progress_bar
+import game_parameters
 
 try:
     from PIL import ImageTk, Image
@@ -97,7 +98,10 @@ class DotsApp:
         self._image_manager = ImageManager('images/dots/', loader=load_image)
 
         # Game
-        counts = [10, 15, 25, 25]
+        self.level = game_parameters.set_game_paramters()
+        self.current_level = 0
+        self.num_levels = len(self.level.levels)
+        counts = self.level.levels[self.current_level]['counts']
         random.shuffle(counts)
         # randomly pair counts with each kind of dot
         objectives = zip([BasicDot(1), BasicDot(2), BasicDot(4), BasicDot(3)], counts)
@@ -108,14 +112,16 @@ class DotsApp:
 
 
         # Game
-        dead_cells = {(2, 2), (2, 3), (2, 4),
-                      (3, 2), (3, 3), (3, 4),
-                      (4, 2), (4, 3), (4, 4),
-                      (0, 7), (1, 7), (6, 7), (7, 7)}
-        self._game = DotGame({BasicDot: 1, WildcardDot: 1}, objectives=self._objectives, kinds=(1, 2, 3, 4), size=(8, 8),
-=======
-        self._game = DotGame({BasicDot: 1}, objectives=self._objectives, kinds=(1, 2, 3, 4), size=(12, 12),
+        dead_cells = self.level.levels[self.current_level]['dead_cells']
+        basic_dots = self.level.levels[self.current_level]['basic_dots']
+        wild_dots = self.level.levels[self.current_level]['wild_dots']
+
+        self._game = DotGame({BasicDot: basic_dots, WildcardDot: wild_dots}, objectives=self._objectives, kinds=(1, 2, 3, 4),
+                             size=self.level.levels[self.current_level]['size'],
                              dead_cells=dead_cells)
+        self.moves = self.level.levels[self.current_level]['moves']
+        self._game.set_moves(self.moves)
+
 
         # The following code may be useful when you are implementing task 2:
          #for i in range(0, 4):
@@ -269,17 +275,73 @@ class DotsApp:
         """Draws the grid"""
         self._grid_view.draw(self._game.grid)
 
-    def reset(self):
+    def set_level(self):
+        """ Set up a new level of the game"""
+
+    def reset(self,info, pbar, step):
+        score = 0
         """Resets the game"""
-        raise NotImplementedError()
+        print("resetting " + step)
+        if step == 'new_game' :
+            info.reset_score()
+            self.current_level = 0
+            score = 0
+        if step == 'new_level':
+            score = self._game.get_score()
+
+        counts = self.level.levels[self.current_level]['counts']
+        random.shuffle(counts)
+        # randomly pair counts with each kind of dot
+        objectives = zip([BasicDot(1), BasicDot(2), BasicDot(4), BasicDot(3)], counts)
+
+        self.initial_objectives = [(BasicDot(1), counts[0]), (BasicDot(2), counts[1]), (BasicDot(4), counts[2]),
+                                   (BasicDot(3), counts[3])]
+
+        self._objectives = ObjectiveManager(objectives)
+        random.shuffle(counts)
+        # randomly pair counts with each kind of dot
+        objectives = zip([BasicDot(1), BasicDot(2), BasicDot(4), BasicDot(3)], counts)
+
+        self.initial_objectives = [(BasicDot(1), counts[0]), (BasicDot(2), counts[1]), (BasicDot(4), counts[2]),
+                                   (BasicDot(3), counts[3])]
+
+        self._objectives = ObjectiveManager(objectives)
+        dead_cells = self.level.levels[self.current_level]['dead_cells']
+        basic_dots = self.level.levels[self.current_level]['basic_dots']
+        wild_dots = self.level.levels[self.current_level]['wild_dots']
+        self._game = DotGame({BasicDot: basic_dots, WildcardDot: wild_dots}, objectives=self._objectives, kinds=(1, 2, 3, 4),
+                             size=self.level.levels[self.current_level]['size'],
+                             dead_cells=dead_cells)
+        moves = self.level.levels[self.current_level]['moves']
+        self._game.set_moves(moves)
+        self._grid_view.destroy()
+        self._grid_view = GridView(self._master, size=self._game.grid.size(), image_manager=self._image_manager)
+        self._grid_view.pack()
+        self._grid_view.draw(self._game.grid)
+        self.draw_grid_borders()
+        self._game._score = score
+        info.set_moves(moves)
+        info.objectives.draw(self.initial_objectives)
+        pbar.reset()
+
+
+        # Events
+        self.bind_events()
+
+        # Set initial score again to trigger view update automatically
+        self._refresh_status()
 
     def check_game_over(self):
         """Checks whether the game is over and shows an appropriate message box if so"""
         state = self._game.get_game_state()
-
         if state == self._game.GameState.WON:
-            showinfo("Game Over!", "You won!!!")
-            self._playing = False
+            self.current_level += 1
+            if self.current_level == self.num_levels :
+                showinfo("Game Over!", "You won!!!")
+                self._playing = False
+            else :
+                showinfo("Level Completed!", "Get Ready for New Level")
+                self._master.event_generate("<<new_level>>", when='tail')
         elif state == self._game.GameState.LOST:
             showinfo("Game Over!",
                      f"You didn't reach the objective(s) in time. You connected {self._game.get_score()} points")
@@ -301,6 +363,8 @@ class DotsApp:
         print('drop is compler')
         print(str(self._objectives.status))
         self.updated_objectives = self._objectives.status
+        self.moves = self._game.get_moves()
+        print("moves ", self.moves)
         self.doit()
 
 
@@ -317,7 +381,7 @@ class DotsApp:
         self.reported_score = score
 
     def doit(self):
-        self._master.event_generate("<<xxxyyy>>", when='tail')
+        self._master.event_generate("<<update_score>>", when='tail')
 
         print('hello')
 
@@ -326,39 +390,32 @@ class DotsApp:
 def doFoo(*args):
     print('hello world')
 
-def update_score(event, obj, info, obj3):
+def update_score(event, current_game, info, pbar):
     #score = frame.reported_score
     print('reported score is : ')
     print("im here")
-    print(obj.reported_score)
-    score = obj.reported_score
+    print(current_game.reported_score)
+    score = current_game.reported_score
     info.set_score(score)
-    obj3.update_score()
-    obj.check_game_over()
-    info.objectives.draw(obj.updated_objectives)
+    moves = current_game.moves
+    info.set_moves(moves)
+    pbar.update_score()
+    current_game.check_game_over()
+    info.objectives.draw(current_game.updated_objectives)
 
 
 def hello():
     print('hello')
 
 
-def setup_menu(x):
+def setup_menu(x, current_game, info, pbar):
     menubar = tk.Menu(x)
-
     # create a pulldown menu, and add it to the menu bar
-    filemenu = tk.Menu(menubar, tearoff=0)
-    filemenu.add_command(label="Open", command=hello)
-    filemenu.add_command(label="Save", command=hello)
+    filemenu = tk.Menu(menubar, tearoff=False)
+    filemenu.add_command(label="Start New Game", command= lambda info=info, pbar=pbar, step='new_game' : current_game.reset(info, pbar, step))
     filemenu.add_separator()
     filemenu.add_command(label="Exit", command=x.quit)
     menubar.add_cascade(label="File", menu=filemenu)
-
-    # create more pulldown menus
-    editmenu = tk.Menu(menubar, tearoff=0)
-    editmenu.add_command(label="Cut", command=hello)
-    editmenu.add_command(label="Copy", command=hello)
-    editmenu.add_command(label="Paste", command=hello)
-    menubar.add_cascade(label="Edit", menu=editmenu)
 
     helpmenu = tk.Menu(menubar, tearoff=0)
     helpmenu.add_command(label="About", command=hello)
@@ -373,32 +430,23 @@ def main():
     # Write your GUI instantiation code here
     root = tk.Tk()
     root.grid()
+    root.title('Dots & Co.')
     frame1 = tk.Frame(root)
     frame1.grid(row=0, column=0)
     pbar = progress_bar.interval_bar(root)
     pbar.grid(row=1, column=0)
     frame2 = tk.Frame(root)
-
     frame2.grid(row=2, column=0)
-
     info = infopanel.InfoPanel(frame1)
 
-
-    #progress = progress_bar.interval_bar(pbar)
-
-
-    #c = Canvas(iframe5, bg='white', width=340, height=100)
-
-    #frame1.bind("<<Foo>>", doFoo)
-    test = DotsApp(frame2)
-    objectives = test.initial_objectives
+    current_game = DotsApp(frame2)
+    objectives = current_game.initial_objectives
     info.objectives.draw(objectives)
-    #frame2.bind("<<xxxyyy>>", update_score(test))
-    frame2.bind("<<xxxyyy>>", lambda event, obj=test, obj2=info, obj3=pbar: update_score(event, obj, obj2, obj3))
-    #bind("<1>", lambda event, obj=l2: OnClickB(event, obj))
-    setup_menu(root)
-
-
+    frame2.bind("<<update_score>>", lambda event, current_game=current_game, info=info, pbar=pbar: update_score(event, current_game, info, pbar))
+    frame2.bind("<<new_level>>", lambda event, info=info, pbar=pbar, step='new_level' : current_game.reset(info, pbar, step))
+    setup_menu(root,current_game, info, pbar)
+    moves = current_game.moves
+    info.set_moves(moves)
     root.mainloop()
 
 
