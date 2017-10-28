@@ -5,6 +5,8 @@ __copyright__ = "Copyright 2017, The University of Queensland"
 __license__ = "MIT"
 __version__ = "1.1.1"
 
+from dot import WildcardDot
+
 
 class AbstractCompanion:
     """Abstract representation of a companion"""
@@ -81,3 +83,27 @@ class UselessCompanion(AbstractCompanion):
             game (DotGame): The game being player
         """
         print("Hey! It looks like you’re writing a letter!")
+
+
+
+class BuffaloCompanion(UselessCompanion):
+    "buffalo companion places wildcard dots on the board"
+
+    NAME = 'buffalo_large'
+    _charge = None
+
+    def activate(self, game):
+        """Activates the companion's ability
+
+        Parameters:
+            game (DotGame): The game being player
+        """
+
+
+
+
+
+
+
+
+

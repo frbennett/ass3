@@ -26,7 +26,10 @@ from view import GridView, ObjectivesView
 from game import DotGame, ObjectiveManager
 from dot import BasicDot
 from dot import WildcardDot
+from dot import AnchorDot
+from companion import BuffaloCompanion
 from util import create_animation, ImageManager
+import pickle
 
 # Fill these in with your details
 __author__ = "Justine Bennett (s4482360)"
@@ -102,29 +105,25 @@ class DotsApp:
         # randomly pair counts with each kind of dot
         objectives = zip([BasicDot(1), BasicDot(2), BasicDot(4), BasicDot(3)], counts)
 
-        self.initial_objectives = [(BasicDot(1), counts[0]), (BasicDot(2), counts[1]), (BasicDot(4), counts[2]), (BasicDot(3), counts[3])]
+        self.initial_objectives = [(BasicDot(1), counts[0]), (BasicDot(2), counts[1]), (BasicDot(4), counts[2]),
+                                   (BasicDot(3), counts[3])]
 
         self._objectives = ObjectiveManager(objectives)
-
 
         # Game
         dead_cells = {(2, 2), (2, 3), (2, 4),
                       (3, 2), (3, 3), (3, 4),
                       (4, 2), (4, 3), (4, 4),
                       (0, 7), (1, 7), (6, 7), (7, 7)}
-<<<<<<< HEAD
-        self._game = DotGame({BasicDot: 1, WildcardDot: 1}, objectives=self._objectives, kinds=(1, 2, 3, 4), size=(8, 8),
-=======
-        self._game = DotGame({BasicDot: 1}, objectives=self._objectives, kinds=(1, 2, 3, 4), size=(12, 12),
->>>>>>> 458411661e080066a671c587cf430fea3d8a42f4
-                             dead_cells=dead_cells)
+
+        self._game = DotGame({BasicDot: 5, WildcardDot: 1, AnchorDot: 0.5}, objectives=self._objectives, kinds=(1, 2, 3, 4),                             dead_cells=dead_cells)
 
         # The following code may be useful when you are implementing task 2:
-         #for i in range(0, 4):
-             #for j in range(0, 2):
-                 #position = i, j
-                 #self._game.grid[position].set_dot(BasicDot(3))
-         #self._game.grid[(7, 3)].set_dot(BasicDot(1))
+        # for i in range(0, 4):
+        #   for j in range(0, 2):
+        #      position = i, j
+        #     self._game.grid[position].set_dot(BasicDot(3))
+        # self._game.grid[(7, 3)].set_dot(BasicDot(1))
 
         # Grid View
         self._grid_view = GridView(master, size=self._game.grid.size(), image_manager=self._image_manager)
@@ -170,7 +169,6 @@ class DotsApp:
         print(step_name)
         self._refresh_status()
         self.draw_grid()
-
 
     def animate(self, steps, callback=lambda: None):
         """Animates some steps (i.e. from selecting some dots, activating companion, etc.
@@ -287,24 +285,25 @@ class DotsApp:
                      f"You didn't reach the objective(s) in time. You connected {self._game.get_score()} points")
             self._playing = False
 
+    @property
     def _drop_complete(self):
         """Handles the end of a drop animation"""
 
-        # Useful for when implementing a companion
-        # if self._game.companion.is_fully_charged():
-        #     self._game.companion.reset()
-        #     steps = self._game.companion.activate(self._game)
-        #     self._refresh_status()
-        #
-        #     return self.animate(steps)
+    #  Useful for when implementing a companion
+        #if self._game.companion.is_fully_charged():
+             #self._game.companion.reset()
+             #steps = self._game.companion.activate(self._game)
+             #self._refresh_status()
 
-        # Need to check whether the game is over
-        #raise NotImplementedError()  # no mercy for stooges
+             #return self.animate(steps)
+
+# Need to check whether the game is over
+
+         #raise NotImplementedError()
         print('drop is compler')
         print(str(self._objectives.status))
         self.updated_objectives = self._objectives.status
         self.doit()
-
 
     def _refresh_status(self):
         """Handles change in score"""
@@ -324,12 +323,12 @@ class DotsApp:
         print('hello')
 
 
-
 def doFoo(*args):
     print('hello world')
 
+
 def update_score(event, obj, info, obj3):
-    #score = frame.reported_score
+    # score = frame.reported_score
     print('reported score is : ')
     print("im here")
     print(obj.reported_score)
@@ -385,27 +384,22 @@ def main():
 
     info = infopanel.InfoPanel(frame1)
 
+    # progress = progress_bar.interval_bar(pbar)
 
-    #progress = progress_bar.interval_bar(pbar)
 
+    # c = Canvas(iframe5, bg='white', width=340, height=100)
 
-    #c = Canvas(iframe5, bg='white', width=340, height=100)
-
-    #frame1.bind("<<Foo>>", doFoo)
+    # frame1.bind("<<Foo>>", doFoo)
     test = DotsApp(frame2)
     objectives = test.initial_objectives
     info.objectives.draw(objectives)
-    #frame2.bind("<<xxxyyy>>", update_score(test))
+    # frame2.bind("<<xxxyyy>>", update_score(test))
     frame2.bind("<<xxxyyy>>", lambda event, obj=test, obj2=info, obj3=pbar: update_score(event, obj, obj2, obj3))
-    #bind("<1>", lambda event, obj=l2: OnClickB(event, obj))
+    # bind("<1>", lambda event, obj=l2: OnClickB(event, obj))
     setup_menu(root)
-
 
     root.mainloop()
 
 
-
 if __name__ == "__main__":
     main()
-
-

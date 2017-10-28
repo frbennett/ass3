@@ -171,4 +171,27 @@ class WildcardDot(AbstractKindlessDot):
     def can_connect(self):
         return True
 
+class AnchorDot(AbstractKindlessDot):
+
+    """a dot activates when it gets to the bottom row of the board and cannot be connected to other dots"""
+
+    DOT_NAME = "anchor"
+
+    def get_view_id(self):
+        return "{0}/{0}".format(self.DOT_NAME)
+
+    def adjacent_activated(self, position, game, activated, activated_neighbours, has_loop=False):
+        pass
+
+    def activate(self, position, game, activated, has_loop=False):
+        self._expired = True
+
+    def after_resolved(self, position, game):
+        pass
+
+    def can_connect(self):
+        return False
+
+
+
 # To understand recursion, see the top of this file
