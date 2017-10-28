@@ -22,6 +22,13 @@ class interval_bar(Canvas):
             self.itemconfig(self.rectangle[self.score], fill="red")
             self.score += 1
 
+    def reset(self):
+        for i in range(self.num_rect):
+            self.itemconfig(self.rectangle[i], fill="steel blue")
+            self.score = 0
+
+
+
 
 
 
